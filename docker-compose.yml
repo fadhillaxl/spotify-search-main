@@ -51,7 +51,7 @@ services:
     networks:
       - spotify-search
     ports:
-      - "3307:3306"
+      - "3308:3306"
 
   # Redis Service
   redis:
