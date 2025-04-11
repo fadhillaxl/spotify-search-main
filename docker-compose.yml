@@ -38,10 +38,10 @@ services:
     container_name: spotify-search-main-db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: spotify_search
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_PASSWORD: password
-      MYSQL_USER: spotify_user
+      MYSQL_DATABASE: ${DB_DATABASE:-spotify_search}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-password}
+      MYSQL_USER: ${DB_USERNAME:-spotify_user}
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
@@ -49,7 +49,7 @@ services:
     networks:
       - spotify-search
     ports:
-      - "3307:3306"
+      - "3307:3307"
 
   # Redis Service
   redis:
