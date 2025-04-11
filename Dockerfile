@@ -30,6 +30,9 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
+# Configure git to trust the directory
+RUN git config --global --add safe.directory /var/www
+
 # Copy composer files first to leverage Docker cache
 COPY composer.json composer.lock ./
 
@@ -43,9 +46,9 @@ COPY . .
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Generate autoloader and run scripts
+# Generate autoloader and run post-autoload-dump script
 RUN composer dump-autoload --optimize --no-dev \
-    && composer run-script post-install-cmd --no-dev
+    && composer run-script post-autoload-dump --no-dev
 
 # Install and build frontend assets
 RUN cd /var/www \
