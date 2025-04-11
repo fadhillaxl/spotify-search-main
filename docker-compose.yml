@@ -1,3 +1,5 @@
+version: '2.4'
+
 services:
   # PHP Service
   app:
@@ -45,7 +47,7 @@ services:
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
     volumes:
-      - dbdata:/var/lib/mysql
+      - ./mysql-data:/var/lib/mysql
     networks:
       - spotify-search
     ports:
