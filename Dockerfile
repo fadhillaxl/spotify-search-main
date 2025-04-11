@@ -49,7 +49,8 @@ COPY . .
 
 # Set proper permissions again after copying files
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/vendor
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/vendor \
+    && chmod -R 777 /var/www/storage/framework /var/www/storage/logs /var/www/storage/cache
 
 # Generate autoloader and run post-autoload-dump script with dev dependencies
 RUN composer dump-autoload --optimize \
