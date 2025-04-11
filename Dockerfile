@@ -65,6 +65,11 @@ RUN cp .env.docker .env \
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist \
     && composer dump-autoload --optimize --no-dev
 
+# Ensure vendor directory exists and has correct permissions
+RUN mkdir -p /var/www/vendor \
+    && chown -R www-data:www-data /var/www/vendor \
+    && chmod -R 775 /var/www/vendor
+
 # Expose port 9000
 EXPOSE 9000
 
