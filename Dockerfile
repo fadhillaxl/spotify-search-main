@@ -33,6 +33,11 @@ WORKDIR /var/www
 # Configure git to trust the directory
 RUN git config --global --add safe.directory /var/www
 
+# Create necessary directories
+RUN mkdir -p /var/www/vendor /var/www/storage /var/www/bootstrap/cache \
+    && chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/vendor
+
 # Copy composer files first to leverage Docker cache
 COPY composer.json composer.lock ./
 
@@ -42,9 +47,9 @@ RUN composer install --no-scripts --no-autoloader --no-interaction --prefer-dist
 # Copy existing application directory
 COPY . .
 
-# Set proper permissions
+# Set proper permissions again after copying files
 RUN chown -R www-data:www-data /var/www \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/vendor
 
 # Generate autoloader and run post-autoload-dump script with dev dependencies
 RUN composer dump-autoload --optimize \
@@ -64,11 +69,6 @@ RUN cp .env.docker .env \
 # Remove dev dependencies after everything is set up
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist \
     && composer dump-autoload --optimize --no-dev
-
-# Ensure vendor directory exists and has correct permissions
-RUN mkdir -p /var/www/vendor \
-    && chown -R www-data:www-data /var/www/vendor \
-    && chmod -R 775 /var/www/vendor
 
 # Expose port 9000
 EXPOSE 9000
