@@ -36,8 +36,8 @@ RUN git config --global --add safe.directory /var/www
 # Copy composer files first to leverage Docker cache
 COPY composer.json composer.lock ./
 
-# Install composer dependencies
-RUN composer install --no-scripts --no-autoloader --no-interaction --no-dev --prefer-dist
+# Install composer dependencies (including dev dependencies for migrations)
+RUN composer install --no-scripts --no-autoloader --no-interaction --prefer-dist
 
 # Copy existing application directory
 COPY . .
@@ -60,6 +60,10 @@ RUN cd /var/www \
 RUN cp .env.docker .env \
     && php artisan key:generate --force \
     && php artisan migrate --force
+
+# Remove dev dependencies after migrations are complete
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist \
+    && composer dump-autoload --optimize --no-dev
 
 # Expose port 9000
 EXPOSE 9000
