@@ -18,6 +18,9 @@ services:
       - spotify-search
     depends_on:
       - redis
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   # Nginx Service
   webserver:
@@ -34,6 +37,9 @@ services:
       - spotify-search
     depends_on:
       - app
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   # Redis Service
   redis:
@@ -44,6 +50,9 @@ services:
       - spotify-search
     ports:
       - "6380:6379"
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
   # Queue Worker Service
   queue:
@@ -63,6 +72,9 @@ services:
     depends_on:
       - app
       - redis
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
 
 networks:
   spotify-search:
