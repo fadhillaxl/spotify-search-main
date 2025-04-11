@@ -50,8 +50,6 @@ services:
       - ./mysql-data:/var/lib/mysql
     networks:
       - spotify-search
-    ports:
-      - "3308:3306"
 
   # Redis Service
   redis:
