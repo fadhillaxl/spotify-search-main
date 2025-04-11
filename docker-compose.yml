@@ -17,7 +17,6 @@ services:
     networks:
       - spotify-search
     depends_on:
-      - db
       - redis
 
   # Nginx Service
@@ -35,23 +34,6 @@ services:
       - spotify-search
     depends_on:
       - app
-
-  # MySQL Service
-  db:
-    image: mysql:8.0
-    container_name: spotify-search-main-db
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: spotify_search
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_PASSWORD: password
-      MYSQL_USER: spotify_user
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    volumes:
-      - ./mysql-data:/var/lib/mysql
-    networks:
-      - spotify-search
 
   # Redis Service
   redis:
@@ -87,7 +69,5 @@ networks:
     driver: bridge
 
 volumes:
-  dbdata:
-    driver: local
   vendor:
     driver: local 

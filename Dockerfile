@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
+    sqlite3 \
+    libsqlite3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -20,7 +22,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip pdo_sqlite \
     && pecl install redis \
     && docker-php-ext-enable redis
 
@@ -40,6 +42,7 @@ RUN mkdir -p /var/www/vendor \
     /var/www/storage/framework/sessions \
     /var/www/storage/logs \
     /var/www/bootstrap/cache \
+    /var/www/database \
     && chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/vendor \
     && chmod -R 777 /var/www/storage/framework /var/www/storage/logs
@@ -68,9 +71,17 @@ RUN cd /var/www \
     && npm run build \
     && chown -R www-data:www-data /var/www/public/build
 
+# Create SQLite database and set permissions
+RUN touch /var/www/database/database.sqlite \
+    && chown www-data:www-data /var/www/database/database.sqlite \
+    && chmod 664 /var/www/database/database.sqlite
+
 # Copy environment file and generate application key
 RUN cp .env.docker .env \
     && php artisan key:generate --force \
+    && php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan config:cache \
     && php artisan migrate --force
 
 # Remove dev dependencies after everything is set up
