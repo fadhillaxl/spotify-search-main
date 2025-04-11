@@ -36,7 +36,7 @@ RUN git config --global --add safe.directory /var/www
 # Copy composer files first to leverage Docker cache
 COPY composer.json composer.lock ./
 
-# Install composer dependencies (including dev dependencies for migrations)
+# Install composer dependencies (including dev dependencies)
 RUN composer install --no-scripts --no-autoloader --no-interaction --prefer-dist
 
 # Copy existing application directory
@@ -46,9 +46,9 @@ COPY . .
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Generate autoloader and run post-autoload-dump script
-RUN composer dump-autoload --optimize --no-dev \
-    && composer run-script post-autoload-dump --no-dev
+# Generate autoloader and run post-autoload-dump script with dev dependencies
+RUN composer dump-autoload --optimize \
+    && composer run-script post-autoload-dump
 
 # Install and build frontend assets
 RUN cd /var/www \
@@ -61,7 +61,7 @@ RUN cp .env.docker .env \
     && php artisan key:generate --force \
     && php artisan migrate --force
 
-# Remove dev dependencies after migrations are complete
+# Remove dev dependencies after everything is set up
 RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist \
     && composer dump-autoload --optimize --no-dev
 
