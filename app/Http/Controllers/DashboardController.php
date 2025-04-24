@@ -22,9 +22,9 @@ class DashboardController extends Controller
 
     public function overlay()
     {
-        $songRequests = SongRequest::orderBy('created_at', 'desc')->get();
-        $playlistSettings = PlaylistSetting::first();
-        
+        $songRequests = SongRequest::where('user_id', auth()->id())->orderBy('created_at', 'desc')->get();
+        $playlistSettings = PlaylistSetting::where('user_id', auth()->id())->first();
+        // dd($songRequests);
         return view('overlay', compact('songRequests', 'playlistSettings'));
     }
     

@@ -11,19 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('song_requests', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('song_name');
-            $table->string('artist')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->text('notes')->nullable();
+        Schema::table('song_requests', function (Blueprint $table) {
             $table->decimal('amount', 10, 2)->nullable();
             $table->string('payment_status')->nullable();
             $table->string('payment_id')->nullable();
             $table->string('payment_method')->nullable();
             $table->timestamp('paid_at')->nullable();
-            $table->timestamps();
         });
     }
 
@@ -32,6 +25,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('song_requests');
+        Schema::table('song_requests', function (Blueprint $table) {
+            $table->dropColumn([
+                'amount',
+                'payment_status',
+                'payment_id',
+                'payment_method',
+                'paid_at'
+            ]);
+        });
     }
 };

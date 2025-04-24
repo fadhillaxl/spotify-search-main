@@ -13,10 +13,12 @@
         <!-- Custom CSS -->
         <style>
             body {
-                background-color: #f8f9fa;
+                background-color: #121212;
+                color: #ffffff;
             }
             .search-card {
-                box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                background-color: #181818;
+                box-shadow: none;
                 border: none;
             }
             .search-button {
@@ -27,10 +29,15 @@
                 background-color: #1aa34a;
                 border-color: #1aa34a;
             }
+            .track-card {
+                background-color: transparent;
+                border: none;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+            }
             .track-card:hover {
-                transform: translateY(-2px);
-                transition: all 0.3s ease;
-                background-color: #f8f9fa;
+                background-color: #282828;
+                transform: none;
             }
             .loading-spinner {
                 width: 3rem;
@@ -53,31 +60,237 @@
             .track-card.hidden-track {
                 display: none;
             }
-            .pagination {
-                margin-top: 1rem;
+            .playlist-header {
+                background: linear-gradient(to bottom, #1DB954, #121212);
+                padding: 2rem 0;
+                margin-bottom: 2rem;
+            }
+            .playlist-info {
+                display: flex;
+                align-items: flex-end;
+                gap: 1.5rem;
+                padding: 0 2rem;
+            }
+            .playlist-image {
+                width: 200px;
+                height: 200px;
+                box-shadow: 0 4px 60px rgba(0,0,0,.5);
+            }
+            .playlist-details {
+                flex: 1;
+            }
+            .playlist-type {
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                margin-bottom: 0.5rem;
+            }
+            .playlist-title {
+                font-size: 3rem;
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+                line-height: 1;
+            }
+            .playlist-description {
+                color: #b3b3b3;
+                margin-bottom: 1rem;
+            }
+            .playlist-stats {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                color: #b3b3b3;
+                font-size: 0.875rem;
+            }
+            .track-list {
+                padding: 0 1rem;
+            }
+            .track-row {
+                display: grid;
+                grid-template-columns: 40px 1fr 60px 40px;
+                gap: 0.75rem;
+                padding: 0.5rem;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+                align-items: center;
+            }
+            @media (min-width: 768px) {
+                .track-row {
+                    grid-template-columns: 50px 4fr 3fr 60px 50px;
+                    gap: 1rem;
+                }
+            }
+            .track-number {
+                color: #b3b3b3;
+                display: flex;
+                align-items: center;
                 justify-content: center;
-                display: flex !important;
+                font-size: 0.875rem;
             }
-            .pagination .page-link {
-                color: #1DB954;
-                border-color: #1DB954;
-                padding: 0.5rem 1rem;
-                margin: 0 0.25rem;
+            .track-title {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                min-width: 0;
+                padding-right: 0.5rem;
             }
-            .pagination .page-item.active .page-link {
-                background-color: #1DB954;
-                border-color: #1DB954;
+            .track-title-content {
+                min-width: 0;
+                flex: 1;
+            }
+            .track-name {
+                font-weight: 500;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-bottom: 0.25rem;
+                font-size: 0.875rem;
+            }
+            .track-artist {
+                color: #b3b3b3;
+                font-size: 0.75rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .track-album {
+                color: #b3b3b3;
+                display: none;
+                align-items: center;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                font-size: 0.875rem;
+                padding-right: 1rem;
+            }
+            @media (min-width: 768px) {
+                .track-album {
+                    display: flex;
+                }
+            }
+            .track-duration {
+                color: #b3b3b3;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                font-size: 0.75rem;
+                font-variant-numeric: tabular-nums;
+                width: 60px;
+                padding-right: 0.5rem;
+            }
+            .track-row-header .track-duration {
+                padding-right: 0.5rem;
+            }
+            .track-image {
+                width: 40px;
+                height: 40px;
+                flex-shrink: 0;
+            }
+            .track-row-header {
+                color: #b3b3b3;
+                border-bottom: 1px solid #282828;
+                padding-bottom: 0.75rem;
+                margin-bottom: 0.5rem;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+            }
+            @media (min-width: 768px) {
+                .track-row-header {
+                    font-size: 0.875rem;
+                }
+            }
+            .track-actions {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .search-container {
+                background-color: #181818;
+                padding: 1rem 2rem;
+                margin-bottom: 2rem;
+            }
+            .search-input {
+                background-color: #2a2a2a;
+                border: none;
                 color: white;
+                padding: 0.75rem 1rem;
+                border-radius: 4px;
             }
-            .pagination .page-link:hover {
-                background-color: #1DB954;
-                border-color: #1DB954;
+            .search-input:focus {
+                background-color: #2a2a2a;
                 color: white;
+                box-shadow: none;
             }
-            .pagination .page-item.disabled .page-link {
+            .modal-content {
+                background-color: #181818;
+                border: none;
+                border-radius: 8px;
+            }
+            .modal-header {
+                border-bottom: 1px solid #282828;
+                padding: 1.5rem;
+            }
+            .modal-title {
+                color: #ffffff;
+                font-weight: 600;
+            }
+            .btn-close {
+                filter: invert(1) grayscale(100%) brightness(200%);
+            }
+            .modal-body {
+                padding: 1.5rem;
+            }
+            .modal-footer {
+                border-top: 1px solid #282828;
+                padding: 1.5rem;
+            }
+            .form-label {
+                color: #b3b3b3;
+                font-size: 0.875rem;
+                font-weight: 500;
+                margin-bottom: 0.5rem;
+            }
+            .form-control {
+                background-color: #2a2a2a;
+                border: 1px solid #404040;
+                color: #ffffff;
+                padding: 0.75rem 1rem;
+                border-radius: 4px;
+            }
+            .form-control:focus {
+                background-color: #2a2a2a;
+                border-color: #1DB954;
+                color: #ffffff;
+                box-shadow: 0 0 0 0.25rem rgba(29, 185, 84, 0.25);
+            }
+            .form-control::placeholder {
                 color: #6c757d;
-                border-color: #dee2e6;
-                pointer-events: none;
+            }
+            .btn-secondary {
+                background-color: transparent;
+                border: 1px solid #404040;
+                color: #ffffff;
+            }
+            .btn-secondary:hover {
+                background-color: #2a2a2a;
+                border-color: #404040;
+                color: #ffffff;
+            }
+            .btn-primary {
+                background-color: #1DB954;
+                border-color: #1DB954;
+                color: #ffffff;
+                font-weight: 500;
+            }
+            .btn-primary:hover {
+                background-color: #1aa34a;
+                border-color: #1aa34a;
+                color: #ffffff;
+            }
+            .btn-primary:disabled {
+                background-color: #1DB954;
+                border-color: #1DB954;
+                opacity: 0.65;
             }
         </style>
         
@@ -98,132 +311,96 @@
                         </h1>
                     </div>
                     
-                    @if(Auth::check())
-                        @php
-                            $activeCredentials = app(App\Services\SpotifyService::class)->getActiveCredentials();
-                        @endphp
-                        
-                        @if($activeCredentials)
-                            <div class="alert alert-info mb-4">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    <div>
-                                        <strong>Using credentials:</strong> {{ $activeCredentials->name }}
-                                        <div class="small text-muted">
-                                            Client ID: {{ Str::limit($activeCredentials->client_id, 15) }}...
-                                            @if($activeCredentials->name === 'Application Credentials')
-                                                <br><small class="text-muted">Using application-level credentials from .env file</small>
-                                            @endif
-                                        </div>
+                    @php
+                        $activeCredentials = app(App\Services\SpotifyService::class)->getActiveCredentials();
+                    @endphp
+                    
+                    @if($activeCredentials)
+                        <div class="playlist-header">
+                            <div class="playlist-info">
+                                <img src="https://cdn0-production-images-kly.akamaized.net/AyCrq0kgaeCj5amdLGAsanQgFOU=/1200x675/smart/filters:quality(75):strip_icc():format(webp)/kly-media-production/medias/929622/original/f08ccf109ec89dfa0c68f02b0a8e5fce15.jpeg" alt="Playlist" class="playlist-image">
+                                <div class="playlist-details">
+                                    <div class="playlist-type">Playlist</div>
+                                    <h1 class="playlist-title">Request Songs</h1>
+                                    <p class="playlist-description">Request your favorite songs to be added to the playlist</p>
+                                    <div class="playlist-stats">
+                                        <span>0 songs</span>
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="card search-card">
-                                <div class="card-body p-4">
-                                    <form id="searchForm" class="mb-4">
-                                        <div class="input-group">
-                                            <input 
-                                                type="text" 
-                                                id="searchInput" 
-                                                name="query" 
-                                                class="form-control form-control-lg"
-                                                placeholder="Search for songs, artists, albums..." 
-                                                required
-                                            >
-                                            <button 
-                                                type="submit" 
-                                                class="btn btn-lg search-button text-white"
-                                            >
-                                                <i class="bi bi-search"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-                                    
-                                    <div class="text-center mb-3">
-                                        <button id="showAllSongsButton" class="btn btn-outline-success">
-                                            <i class="bi bi-music-note-list me-1"></i>Show All Songs
-                                        </button>
-                                        <button id="requestSongButton" class="btn btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#songRequestModal">
-                                            <i class="bi bi-plus-circle me-1"></i>Request a Song
-                                        </button>
-                                    </div>
-                                    
-                                    <div id="playlistInfo" class="text-center mb-3 d-none">
-                                        <span class="badge bg-success">
-                                            <i class="bi bi-music-note-list me-1"></i>
-                                            <span id="totalTracksCount">0</span> tracks in playlist
-                                        </span>
-                                    </div>
-                                    
-                                    <div id="searchResults" class="d-flex flex-column gap-3">
-                                        <!-- Results will be displayed here -->
-                                    </div>
-                                    
-                                    <div id="showMoreContainer" class="text-center mt-4">
-                                        <button id="showMoreButton" class="btn btn-lg show-more-button">
-                                            Show More
-                                            <i class="bi bi-chevron-down ms-1"></i>
-                                        </button>
-                                    </div>
-                                    
-                                    <div id="loadingIndicator" class="text-center py-4 d-none">
-                                        <div class="spinner-border loading-spinner" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                        <p class="mt-3 text-muted">Searching...</p>
-                                    </div>
-                                    
-                                    <div id="noResults" class="text-center py-4 text-muted d-none">
-                                        <i class="bi bi-emoji-frown fs-1"></i>
-                                        <p class="mt-2">No results found. Try a different search term.</p>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
 
-                            <!-- Active Playlists Section -->
-                            <div class="mt-5">
-                                <h3 class="text-center">Active Playlists</h3>
-                                <div id="activePlaylists" class="d-flex flex-column gap-3">
-                                    <!-- Active playlists will be displayed here -->
+                        <div class="search-container">
+                            <form id="searchForm" class="mb-4">
+                                <div class="input-group">
+                                    <input 
+                                        type="text" 
+                                        id="searchInput" 
+                                        name="query" 
+                                        class="form-control search-input"
+                                        placeholder="Search for songs, artists, albums..." 
+                                        required
+                                    >
+                                    <button 
+                                        type="submit" 
+                                        class="btn btn-lg search-button text-white"
+                                    >
+                                        <i class="bi bi-search"></i>
+                                    </button>
                                 </div>
+                            </form>
+                            
+                            <div class="text-center mb-3">
+                                <button id="showAllSongsButton" class="btn btn-outline-success">
+                                    <i class="bi bi-music-note-list me-1"></i>Show All Songs
+                                </button>
+                                <button id="requestSongButton" class="btn btn-outline-primary ms-2" data-bs-toggle="modal" data-bs-target="#songRequestModal">
+                                    <i class="bi bi-plus-circle me-1"></i>Request a Song
+                                </button>
                             </div>
-                        @else
-                            <div class="alert alert-warning mb-4">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-exclamation-triangle me-2"></i>
-                                    <div>
-                                        <strong>No active credentials found.</strong>
-                                        <a href="{{ route('spotify.credentials.create') }}" class="alert-link">Add your Spotify API credentials</a> to use your own account.
-                                    </div>
-                                </div>
+                        </div>
+
+                        <div class="track-list">
+                            <div class="track-row track-row-header">
+                                <div class="track-number">#</div>
+                                <div class="track-title">Title</div>
+                                <div class="track-album">Album</div>
+                                <div class="track-duration">Duration</div>
+                                <div class="track-actions"></div>
                             </div>
                             
-                            <div class="card search-card">
-                                <div class="card-body p-4 text-center">
-                                    <i class="bi bi-lock-fill text-muted" style="font-size: 3rem;"></i>
-                                    <h4 class="mt-3">Search Feature Locked</h4>
-                                    <p class="text-muted">You need to add Spotify API credentials to use the search feature.</p>
-                                    <div class="d-flex justify-content-center gap-2 mt-3">
-                                        <a href="{{ route('spotify.credentials.create') }}" class="btn btn-primary">
-                                            <i class="bi bi-plus-circle me-2"></i>Add Your Credentials
-                                        </a>
-                                        <a href="{{ route('documentation') }}" class="btn btn-outline-secondary">
-                                            <i class="bi bi-book me-2"></i>View Documentation
-                                        </a>
-                                    </div>
+                            <div id="searchResults" class="d-flex flex-column">
+                                <!-- Results will be displayed here -->
+                            </div>
+                            
+                            <div id="loadingIndicator" class="text-center py-4 d-none">
+                                <div class="spinner-border loading-spinner" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-3 text-muted">Searching...</p>
+                            </div>
+                            
+                            <div id="noResults" class="text-center py-4 text-muted d-none">
+                                <i class="bi bi-emoji-frown fs-1"></i>
+                                <p class="mt-2">No results found. Try a different search term.</p>
+                            </div>
+                        </div>
+                    @else
+                        <div class="alert alert-warning mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <div>
+                                    <strong>No active credentials found.</strong>
+                                    Please contact the administrator to set up the application credentials.
                                 </div>
                             </div>
-                        @endif
-                    @else
+                        </div>
+                        
                         <div class="card search-card">
                             <div class="card-body p-4 text-center">
-                                <i class="bi bi-person-lock text-muted" style="font-size: 3rem;"></i>
-                                <h4 class="mt-3">Authentication Required</h4>
-                                <p class="text-muted">Please log in to use the search feature.</p>
-                                <a href="{{ route('login') }}" class="btn btn-primary mt-2">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i>Log In
-                                </a>
+                                <i class="bi bi-lock-fill text-muted" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Search Feature Unavailable</h4>
+                                <p class="text-muted">The search feature is currently unavailable. Please try again later.</p>
                             </div>
                         </div>
                     @endif
@@ -243,25 +420,36 @@
                     </div>
                     <div class="modal-body">
                         <form id="songRequestForm">
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="requestName" class="form-label">Your Name</label>
                                 <input type="text" class="form-control" id="requestName" name="name" required>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="songName" class="form-label">Song Name</label>
                                 <input type="text" class="form-control" id="songName" name="song_name" required>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="artistName" class="form-label">Artist (Optional)</label>
                                 <input type="text" class="form-control" id="artistName" name="artist">
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-4">
                                 <label for="amount" class="form-label">Payment Amount (Minimum Rp 10,000)</label>
-                                <input type="number" class="form-control" id="amount" name="amount" min="10000" required>
+                                <input type="text" class="form-control" id="amount" name="amount" required placeholder="Rp 10.000,00" oninput="this.value = formatCurrency(this.value)">
+                                <script>
+                                    function formatCurrency(value) {
+                                        const numberString = value.replace(/[^,\d]/g, '').toString();
+                                        const split = numberString.split(',');
+                                        let rupiah = split[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                        if (split[1] !== undefined) {
+                                            rupiah += ',' + split[1];
+                                        }
+                                        return 'Rp ' + rupiah;
+                                    }
+                                </script>
                             </div>
                         </form>
                     </div>
@@ -273,13 +461,78 @@
             </div>
         </div>
         
-        <!-- Request Success Alert -->
-        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <!-- Request Success Toast -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
             <div id="requestSuccessToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="d-flex">
-                    <div class="toast-body">
+                    <div class="toast-body fw-bold">
                         <i class="bi bi-check-circle-fill me-2"></i>
                         Song request submitted successfully!
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Success Toast -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
+            <div id="paymentSuccessToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Payment successful! Your song request will be processed.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Pending Toast -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
+            <div id="paymentPendingToast" class="toast align-items-center text-white bg-warning border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                        Payment is pending. Please complete the payment to process your song request.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Error Toast -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
+            <div id="paymentErrorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                        <i class="bi bi-x-circle-fill me-2"></i>
+                        Payment failed. Please try again.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Cancelled Toast -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
+            <div id="paymentCancelledToast" class="toast align-items-center text-white bg-info border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Payment was cancelled. Please try again if you want to complete your song request.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Toast -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
+            <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                        <i class="bi bi-x-circle-fill me-2"></i>
+                        <span id="errorMessage"></span>
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
@@ -337,14 +590,17 @@
                     let allTracks = [];
                     
                     // Store the active playlist ID
-                    let activePlaylistId = null;
+                    let activeplaylistId = @json($activeplaylistId);
                     
                     // Function to display tracks
                     function displayTracks(tracks, showAll = false) {
                         if (!tracks || tracks.length === 0) {
-                            noResults.classList.remove('d-none');
-                            showMoreContainer.style.display = 'none';
-                            document.getElementById('playlistInfo').classList.add('d-none');
+                            if (noResults) {
+                                noResults.classList.remove('d-none');
+                            }
+                            if (showMoreContainer) {
+                                showMoreContainer.style.display = 'none';
+                            }
                             return;
                         }
                         
@@ -352,66 +608,61 @@
                         currentlyShown = itemsToShow;
                         
                         // Clear existing results
-                        searchResults.innerHTML = '';
+                        if (searchResults) {
+                            searchResults.innerHTML = '';
+                        }
                         
-                        // Update total tracks count
-                        document.getElementById('totalTracksCount').textContent = tracks.length;
-                        document.getElementById('playlistInfo').classList.remove('d-none');
+                        // Update playlist stats
+                        const playlistStats = document.querySelector('.playlist-stats');
+                        if (playlistStats) {
+                            playlistStats.innerHTML = `<span>${tracks.length} songs</span>`;
+                        }
                         
                         // Generate all results HTML
                         const resultsHTML = tracks.map((track, index) => `
-                            <div class="card track-card ${index >= itemsToShow ? 'hidden-track' : ''}" data-index="${index}">
-                                <div class="card-body d-flex align-items-center gap-3 p-3">
+                            <div class="track-row" data-index="${index}">
+                                <div class="track-number">${index + 1}</div>
+                                <div class="track-title">
                                     <img 
-                                        src="${track.album?.images?.[0]?.url || 'https://via.placeholder.com/64'}" 
+                                        src="${track.album?.images?.[0]?.url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiMyODI4MjgiLz48cGF0aCBkPSJNMjAgMTBDMTUuNTg1OCAxMCAxMiAxMy41ODU4IDEyIDE4QzEyIDIyLjQxNDIgMTUuNTg1OCAyNiAyMCAyNkMyNC40MTQyIDI2IDI4IDIyLjQxNDIgMjggMThDMjggMTMuNTg1OCAyNC40MTQyIDEwIDIwIDEwWiIgZmlsbD0iIzRBNEE0QSIvPjwvc3ZnPg=='}" 
                                         alt="${track.album?.name || 'Album'}" 
-                                        class="rounded"
-                                        width="64" 
-                                        height="64"
+                                        class="track-image"
                                     >
-                                    <div class="flex-grow-1">
-                                        <h5 class="card-title mb-1">${track.name || 'Unknown Track'}</h5>
-                                        <p class="card-text text-muted mb-1">
-                                            <i class="bi bi-person-fill me-1"></i>
+                                    <div class="track-title-content">
+                                        <div class="track-name">${track.name || 'Unknown Track'}</div>
+                                        <div class="track-artist">
                                             ${track.artists ? track.artists.map(artist => artist.name).join(', ') : 'Unknown Artist'}
-                                        </p>
-                                        <p class="card-text text-muted small mb-0">
-                                            <i class="bi bi-disc-fill me-1"></i>
-                                            ${track.album?.name || 'Unknown Album'}
-                                        </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <button class="btn btn-sm btn-outline-primary request-song-btn" 
-                                            data-song-name="${track.name || 'Unknown Track'}"
-                                            data-artist="${track.artists ? track.artists.map(artist => artist.name).join(', ') : 'Unknown Artist'}"
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#songRequestModal">
-                                            <i class="bi bi-plus-circle"></i> Request
-                                        </button>
-                                    </div>
+                                </div>
+                                <div class="track-album">${track.album?.name || 'Unknown Album'}</div>
+                                <div class="track-duration">${formatDuration(track.duration_ms)}</div>
+                                <div class="track-actions">
+                                    <button class="btn btn-sm btn-outline-primary request-song-btn" 
+                                        data-song-name="${track.name || 'Unknown Track'}"
+                                        data-artist="${track.artists ? track.artists.map(artist => artist.name).join(', ') : 'Unknown Artist'}"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#songRequestModal">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </button>
                                 </div>
                             </div>
                         `).join('');
                         
                         // Add the results
-                        searchResults.innerHTML = resultsHTML;
-                        
-                        // Debug logging
-                        console.log('Total tracks:', tracks.length);
-                        console.log('Items to show:', itemsToShow);
-                        console.log('Currently shown:', currentlyShown);
+                        if (searchResults) {
+                            searchResults.innerHTML = resultsHTML;
+                        }
                         
                         // Show/hide "Show More" button based on remaining tracks
-                        const remainingTracks = tracks.length - currentlyShown;
-                        console.log('Remaining tracks:', remainingTracks);
-                        
-                        if (remainingTracks > 0) {
-                            console.log('Showing "Show More" button');
-                            showMoreContainer.style.display = 'block';
-                            showMoreButton.textContent = `Show More (${remainingTracks} more)`;
-                        } else {
-                            // console.log('Hiding "Show More" button');
-                            // showMoreContainer.style.display = 'none';
+                        if (showMoreContainer && showMoreButton) {
+                            const remainingTracks = tracks.length - currentlyShown;
+                            if (remainingTracks > 0) {
+                                showMoreContainer.style.display = 'block';
+                                showMoreButton.textContent = `Show More (${remainingTracks} more)`;
+                            } else {
+                                showMoreContainer.style.display = 'none';
+                            }
                         }
                     }
                     
@@ -446,7 +697,7 @@
                         // Check if playlistids is provided and has at least one element
                         if (!playlistids || !playlistids.length) {
                             // If no playlist IDs provided, use the active playlist ID or default
-                            const playlistId = activePlaylistId;
+                            const playlistId = activeplaylistId;
                             fetchPlaylistTracks(playlistId, showAll);
                             return;
                         }
@@ -455,7 +706,7 @@
                         console.log(playlist_ids);
                         
                         // Store the active playlist ID for later use
-                        activePlaylistId = playlist_ids;
+                        activeplaylistId = playlist_ids;
                         
                         // Fetch tracks from the specific playlist
                         fetchPlaylistTracks(playlist_ids, showAll);
@@ -463,7 +714,7 @@
                     
                     // Helper function to fetch tracks from a playlist
                     function fetchPlaylistTracks(playlistId, showAll = false) {
-                        fetch(`/api/playlist/${playlistId}/tracks`)
+                        fetch(`/api/request/playlist/${playlistId}/tracks`)
                             .then(response => {
                                 if (!response.ok) {
                                     throw new Error('Playlist endpoint not available');
@@ -497,29 +748,10 @@
                     
                     // Function to fetch active playlists
                     function fetchActivePlaylists() {
-                        fetch('/api/active-playlists')
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Failed to fetch active playlists');
-                                }
-                                // console.log(response);
-                                return response.json();
-                            })
-                            .then(data => {
-                                console.log(data)
-                                if (data.success) {
-                                    // Only call displayActivePlaylists if the container exists
-                                    if (activePlaylistsContainer) {
-                                        displayActivePlaylists(data.playlist_ids);
-                                    }
-                                    loadPlaylistTracks(data.playlist_ids);
-                                } else {
-                                    console.error(data.message);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error fetching active playlists:', error);
-                            });
+                        if (activePlaylistsContainer) {
+                            displayActivePlaylists([activeplaylistId]);
+                        }
+                        loadPlaylistTracks([activeplaylistId]);
                     }
                     
                     // Call loadPlaylistTracks when page loads
@@ -556,7 +788,13 @@
                             
                             // Convert FormData to JSON object
                             for (const [key, value] of formData.entries()) {
-                                data[key] = value;
+                                if (key === 'amount') {
+                                    // Remove 'Rp ' prefix and convert comma to dot
+                                    const numericValue = value.replace('Rp ', '').replace(/\./g, '').replace(',', '.');
+                                    data[key] = parseFloat(numericValue);
+                                } else {
+                                    data[key] = value;
+                                }
                             }
                             
                             // Show loading state
@@ -632,11 +870,11 @@
                                                         // Retry opening the payment popup
                                                         openPaymentPopup(paymentResult.snap_token);
                                                     } else {
-                                                        alert('Payment system is not ready. Please try again later.');
+                                                        showToast('errorToast', 'Payment system is not ready. Please try again later.');
                                                     }
                                                 };
                                                 script.onerror = function() {
-                                                    alert('Failed to load payment system. Please try again later.');
+                                                    showToast('errorToast', 'Failed to load payment system. Please try again later.');
                                                 };
                                                 document.body.appendChild(script);
                                                 return;
@@ -649,13 +887,13 @@
                                     })
                                     .catch(error => {
                                         console.error('Payment creation error:', error);
-                                        alert('Failed to create payment: ' + (error.message || 'Unknown error'));
+                                        showToast('errorToast', 'Failed to create payment: ' + (error.message || 'Unknown error'));
                                     });
 
                                     function openPaymentPopup(snapToken) {
                                         if (!snapToken) {
                                             console.error('No snap token provided');
-                                            alert('Failed to initialize payment. Please try again.');
+                                            showToast('errorToast', 'Failed to initialize payment. Please try again.');
                                             return;
                                         }
 
@@ -690,36 +928,32 @@
                                                     })
                                                     .then(data => {
                                                         if (data.success) {
-                                                            // Show success message
-                                                            alert('Payment successful! Your song request will be processed.');
+                                                            showToast('paymentSuccessToast');
                                                         } else {
-                                                            throw new Error(data.message || 'Failed to update payment status');
+                                                            showToast('errorToast', data.message || 'Failed to update payment status');
                                                         }
                                                     })
                                                     .catch(error => {
                                                         console.error('Error updating payment status:', error);
-                                                        alert('Payment was successful but there was an error updating the status. Please contact support.');
+                                                        showToast('errorToast', 'Payment was successful but there was an error updating the status. Please contact support.');
                                                     });
                                                 },
                                                 onPending: function(result) {
                                                     console.log('Payment pending', result);
-                                                    // Show pending message
-                                                    alert('Payment is pending. Please complete the payment to process your song request.');
+                                                    showToast('paymentPendingToast');
                                                 },
                                                 onError: function(result) {
                                                     console.log('Payment error', result);
-                                                    // Show error message
-                                                    alert('Payment failed. Please try again.');
+                                                    showToast('paymentErrorToast');
                                                 },
                                                 onClose: function() {
                                                     console.log('Payment popup closed');
-                                                    // Show message that payment was cancelled
-                                                    alert('Payment was cancelled. Please try again if you want to complete your song request.');
+                                                    showToast('paymentCancelledToast');
                                                 }
                                             });
                                         } catch (error) {
                                             console.error('Error opening payment popup:', error);
-                                            alert('Failed to open payment popup. Please try again.');
+                                            showToast('errorToast', 'Failed to open payment popup. Please try again.');
                                         }
                                     }
                                 } else {
@@ -734,7 +968,7 @@
                                 this.innerHTML = 'Submit Request';
                                 
                                 // Show error message
-                                alert('An error occurred: ' + (error.message || 'Unknown error'));
+                                showToast('errorToast', error.message || 'Unknown error');
                             });
                         });
                     }
@@ -766,10 +1000,10 @@
                         noResults.classList.add('d-none');
                         
                         // Use the active playlist ID if available, otherwise use a default
-                        const playlistId = activePlaylistId;
+                        const playlistId = activeplaylistId;
                         
                         // Use the playlist search endpoint with the active playlist ID
-                        fetch(`/api/playlist/${playlistId}/search?query=${encodeURIComponent(query)}`)
+                        fetch(`/api/request/playlist/${playlistId}/search?query=${encodeURIComponent(query)}`)
                             .then(response => response.json())
                             .then(data => {
                                 loadingIndicator.classList.add('d-none');
@@ -828,6 +1062,23 @@
                     // Add event listener for the "Show More" button
                     if (showMoreButton) {
                         showMoreButton.addEventListener('click', showMoreTracks);
+                    }
+
+                    // Function to format duration in mm:ss
+                    function formatDuration(ms) {
+                        const minutes = Math.floor(ms / 60000);
+                        const seconds = Math.floor((ms % 60000) / 1000);
+                        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+
+                    // Function to show toast
+                    function showToast(toastId, message = null) {
+                        const toastElement = document.getElementById(toastId);
+                        if (message && toastId === 'errorToast') {
+                            document.getElementById('errorMessage').textContent = message;
+                        }
+                        const toast = new bootstrap.Toast(toastElement);
+                        toast.show();
                     }
                 }
             });

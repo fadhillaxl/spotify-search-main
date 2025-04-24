@@ -16,7 +16,7 @@
             <div class="card dashboard-card mb-4">
                 <div class="card-body p-4">
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card bg-primary text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Requests</h5>
@@ -24,7 +24,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card bg-warning text-dark">
                                 <div class="card-body">
                                     <h5 class="card-title">Pending</h5>
@@ -32,14 +32,15 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="card bg-success text-white">
                                 <div class="card-body">
-                                    <h5 class="card-title">Approved</h5>
+                                    <h5 class="card-title">Paid</h5>
                                     <p class="card-text display-6" id="approvedRequests">{{ $songRequests->where('status', 'approved')->count() }}</p>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                     
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -47,7 +48,7 @@
                         <div class="btn-group" role="group">
                             <button type="button" class="btn btn-outline-secondary active filter-btn" data-filter="all">All</button>
                             <button type="button" class="btn btn-outline-warning filter-btn" data-filter="pending">Pending</button>
-                            <button type="button" class="btn btn-outline-success filter-btn" data-filter="approved">Approved</button>
+                            <button type="button" class="btn btn-outline-success filter-btn" data-filter="approved">Paid</button>
                             <button type="button" class="btn btn-outline-danger filter-btn" data-filter="rejected">Rejected</button>
                         </div>
                     </div>
@@ -79,11 +80,20 @@
                                                     <i class="bi bi-clock me-1"></i>
                                                     {{ $request->created_at->format('M d, Y h:i A') }}
                                                 </p>
+                                                <p class="card-text text-muted small mb-0 amount-display">
+                                                    <i class="bi bi-currency-dollar me-1"></i>
+                                                    Amount: Rp {{ number_format($request->amount, 0, ',', '.') }}
+                                                </p>
                                             </div>
                                             <div class="d-flex flex-column align-items-end">
-                                                <span class="badge status-badge status-{{ $request->status }} mb-2">
-                                                    {{ ucfirst($request->status) }}
-                                                </span>
+                                                <div class="d-flex gap-2 mb-2">
+                                                    <span class="badge status-badge status-{{ $request->status }}">
+                                                        {{ $request->status === 'approved' ? 'Unpaid' : ucfirst($request->status) }}
+                                                    </span>
+                                                    <span class="badge payment-badge payment-{{ $request->payment_status }}">
+                                                        {{ ucfirst($request->payment_status ?? 'unpaid') }}
+                                                    </span>
+                                                </div>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-sm btn-outline-success update-status-btn" 
                                                         data-id="{{ $request->id }}" 
@@ -168,6 +178,34 @@
         opacity: 0.7;
         pointer-events: none;
     }
+    .payment-badge {
+        font-size: 0.8rem;
+        padding: 0.35em 0.65em;
+    }
+    .payment-success {
+        background-color: #198754;
+        color: #fff;
+    }
+    .payment-pending {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    .payment-failed {
+        background-color: #dc3545;
+        color: #fff;
+    }
+    .payment-expired {
+        background-color: #6c757d;
+        color: #fff;
+    }
+    .payment-cancelled {
+        background-color: #6c757d;
+        color: #fff;
+    }
+    .payment-unpaid {
+        background-color: #6c757d;
+        color: #fff;
+    }
 </style>
 @endpush
 
@@ -213,6 +251,21 @@
             addNewRequestCard(data);
             updateStatistics();
         });
+
+        // Listen for payment.success events
+        channel.bind('payment.success', function(data) {
+            console.log('Payment successful:', data);
+            // Update the request card with new status
+            const updates = {
+                ...data,
+                status: 'approved',
+                payment_status: 'success',
+                payment_method: data.payment_method,
+                paid_at: data.paid_at
+            };
+            updateRequestCard(updates);
+            updateStatistics();
+        });
         
         // Function to add new request card
         function addNewRequestCard(data) {
@@ -240,20 +293,31 @@
                                     <i class="bi bi-clock me-1"></i>
                                     ${data.created_at}
                                 </p>
+                                <p class="card-text text-muted small mb-0 amount-display">
+                                    <i class="bi bi-currency-dollar me-1"></i>
+                                    Amount: Rp ${data.amount ? new Intl.NumberFormat('id-ID').format(data.amount) : '0'}
+                                </p>
                             </div>
                             <div class="d-flex flex-column align-items-end">
-                                <span class="badge status-badge status-${data.status} mb-2">
-                                    ${data.status.charAt(0).toUpperCase() + data.status.slice(1)}
-                                </span>
+                                <div class="d-flex gap-2 mb-2">
+                                    <span class="badge status-badge status-${data.status}">
+                                        ${data.status === 'approved' ? 'Unpaid' : data.status.charAt(0).toUpperCase() + data.status.slice(1)}
+                                    </span>
+                                    <span class="badge payment-badge payment-${data.payment_status || 'unpaid'}">
+                                        ${data.payment_status ? data.payment_status.charAt(0).toUpperCase() + data.payment_status.slice(1) : 'Unpaid'}
+                                    </span>
+                                </div>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-success update-status-btn" 
                                         data-id="${data.id}" 
-                                        data-status="approved">
+                                        data-status="approved"
+                                        ${data.status === 'approved' ? 'disabled' : ''}>
                                         <i class="bi bi-check-lg"></i>
                                     </button>
                                     <button type="button" class="btn btn-sm btn-outline-danger update-status-btn" 
                                         data-id="${data.id}" 
-                                        data-status="rejected">
+                                        data-status="rejected"
+                                        ${data.status === 'rejected' ? 'disabled' : ''}>
                                         <i class="bi bi-x-lg"></i>
                                     </button>
                                 </div>
@@ -290,7 +354,23 @@
             // Update status badge
             const statusBadge = card.querySelector('.status-badge');
             statusBadge.className = `badge status-badge status-${data.status}`;
-            statusBadge.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+            statusBadge.textContent = data.status === 'approved' ? 'Unpaid' : data.status.charAt(0).toUpperCase() + data.status.slice(1);
+            
+            // Update payment badge
+            const paymentBadge = card.querySelector('.payment-badge');
+            if (data.payment_status) {
+                paymentBadge.className = `badge payment-badge payment-${data.payment_status}`;
+                paymentBadge.textContent = data.payment_status.charAt(0).toUpperCase() + data.payment_status.slice(1);
+            } else {
+                paymentBadge.className = 'badge payment-badge payment-unpaid';
+                paymentBadge.textContent = 'Unpaid';
+            }
+
+            // Update amount display
+            const amountElement = card.querySelector('.amount-display');
+            if (amountElement && data.amount) {
+                amountElement.textContent = `Amount: Rp ${new Intl.NumberFormat('id-ID').format(data.amount)}`;
+            }
             
             // Update data attribute
             card.setAttribute('data-status', data.status);

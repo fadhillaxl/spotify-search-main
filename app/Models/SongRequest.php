@@ -17,5 +17,15 @@ class SongRequest extends Model
         'artist',
         'status',
         'notes',
+        'amount',
+        'payment_status',
+        'payment_id',
+        'payment_method',
+        'paid_at',
+    ];
+
+    protected $casts = [
+        'amount' => 'decimal:2',
+        'paid_at' => 'datetime',
     ];
 }

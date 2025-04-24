@@ -15,11 +15,7 @@ class SpotifyController extends Controller
     public function __construct(SpotifyService $spotify)
     {
         $this->spotify = $spotify;
-        
-        // Always use the authenticated user's credentials if available
-        if (Auth::check()) {
-            $this->spotify->forUser(Auth::user());
-        }
+        // Don't set a user, which will make the service use application credentials by default
     }
 
     /**
@@ -27,7 +23,17 @@ class SpotifyController extends Controller
      */
     public function index()
     {
+        // dd($this->spotify->forUser(Auth::user()));
         return view('search');
+    }
+
+    public function searchRequest($bandname)
+    {
+        $userId = \App\Models\User::where('name', $bandname)->value('id');
+        $activeplaylist = \App\Models\Playlist::where('user_id', $userId)->where('is_active', true)->first();
+        $activeplaylistId = $activeplaylist ? $activeplaylist->spotify_playlist_id : null;
+
+        return view('request', compact('bandname', 'activeplaylistId'));
     }
 
     /**
@@ -71,27 +77,48 @@ class SpotifyController extends Controller
      */
     public function storeSongRequest(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'song_name' => 'required|string|max:255',
-            'artist' => 'nullable|string|max:255',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'song_name' => 'required|string|max:255',
+                'artist' => 'nullable|string|max:255',
+                'email' => 'required|email',
+                'amount' => 'required|numeric|min:10000'
+            ]);
 
-        $songRequest = \App\Models\SongRequest::create([
-            'name' => $validated['name'],
-            'song_name' => $validated['song_name'],
-            'artist' => $validated['artist'],
-            'status' => 'pending',
-        ]);
+            $songRequest = \App\Models\SongRequest::create([
+                'name' => $validated['name'],
+                'song_name' => $validated['song_name'],
+                'artist' => $validated['artist'],
+                'status' => 'pending',
+            ]);
 
-        // Broadcast the new request event
-        event(new SongRequestCreated($songRequest));
+            // Broadcast the new request event
+            event(new SongRequestCreated($songRequest));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Song request submitted successfully',
-            'data' => $songRequest
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Song request submitted successfully',
+                'data' => $songRequest
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to store song request', [
+                'error' => $e->getMessage(),
+                'request' => $request->all()
+            ]);
+
+            if ($request->input('amount') < 10000) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Oppss minimal Rp.10000 guys'
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to submit song request: ' . $e->getMessage() . '. Please try again later.'
+            ], 500);
+        }
     }
     
     /**

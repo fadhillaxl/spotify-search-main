@@ -23,7 +23,7 @@ services:
     container_name: spotify-search-main-nginx
     restart: unless-stopped
     ports:
-      - "8000:80"
+      - "0.0.0.0:8001:80"
     volumes:
       - ./:/var/www
       - ./nginx.conf:/etc/nginx/conf.d/default.conf

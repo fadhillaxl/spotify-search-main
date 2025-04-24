@@ -241,6 +241,24 @@ class SpotifyService
      */
     public function getActiveCredentials()
     {
+        if ($this->user) {
+            $this->credentials = SpotifyApiCredential::getActiveForUser($this->user->id);
+            \Log::info('Getting active credentials', [
+                'user_id' => $this->user->id,
+                'has_credentials' => $this->credentials ? 'yes' : 'no'
+            ]);
+        }
+
+        // If no user credentials found, return application credentials
+        if (!$this->credentials) {
+            return (object)[
+                'name' => 'Application Credentials',
+                'client_id' => config('services.spotify.client_id'),
+                'client_secret' => config('services.spotify.client_secret'),
+                'is_active' => true
+            ];
+        }
+
         return $this->credentials;
     }
 }
