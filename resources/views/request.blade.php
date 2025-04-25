@@ -437,6 +437,10 @@
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
                             <div class="mb-4">
+                                <label for="notes" class="form-label">Pesan</label>
+                                <input type="text" class="form-control" id="notes" name="notes" required>
+                            </div>
+                            <div class="mb-4">
                                 <label for="amount" class="form-label">Payment Amount (Minimum Rp 10,000)</label>
                                 <input type="text" class="form-control" id="amount" name="amount" required placeholder="Rp 10.000,00" oninput="this.value = formatCurrency(this.value)">
                                 <script>
