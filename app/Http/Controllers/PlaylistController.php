@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Playlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class PlaylistController extends Controller
 {
@@ -66,13 +67,20 @@ class PlaylistController extends Controller
      */
     public function store(Request $request)
     {
+        // $userId = auth()->id();
         try {
             $validated = $request->validate([
-                'spotify_playlist_id' => 'required|string|unique:playlists',
+                // 'spotify_playlist_id' => 'required|string|unique:playlists',
+                'spotify_playlist_id' => [
+                    'required',
+                    Rule::unique('playlists', 'spotify_playlist_id')
+                        ->where('user_id', auth()->id()),
+                ],
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string|max:1000',
                 'is_active' => 'boolean'
             ]);
+            // dd($validated);
 
             // Use the user's createPlaylist method to create the playlist
             $playlist = auth()->user()->createPlaylist($validated);
@@ -81,7 +89,7 @@ class PlaylistController extends Controller
                 ->with('success', 'Playlist added successfully.');
         } catch (\Exception $e) {
             Log::error('Error creating playlist: ' . $e->getMessage());
-            // dd($e);
+            dd($e);
             return redirect()->back()
                 ->withInput()
                 ->with('error', $e->getMessage() ?? 'Failed to create playlist. Please try again.');

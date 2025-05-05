@@ -32,7 +32,7 @@ class SpotifyController extends Controller
         $userId = \App\Models\User::where('name', $bandname)->value('id');
         $activeplaylist = \App\Models\Playlist::where('user_id', $userId)->where('is_active', true)->first();
         $activeplaylistId = $activeplaylist ? $activeplaylist->spotify_playlist_id : null;
-
+        // dd($activeplaylistId);
         return view('request', compact('bandname', 'activeplaylistId'));
     }
 
@@ -75,51 +75,115 @@ class SpotifyController extends Controller
     /**
      * Store a song request
      */
+    // public function storeSongRequest(Request $request)
+    // {
+    //     try {
+    //         $validated = $request->validate([
+    //             'name' => 'required|string|max:255',
+    //             'song_name' => 'required|string|max:255',
+    //             'artist' => 'nullable|string|max:255',
+    //             'email' => 'required|email',
+    //             'amount' => 'required|numeric|min:10000',
+    //         ]);
+    //         $userId = \App\Models\User::where('name', $validated['name'])->value('id');
+
+    //         if (!$userId) {
+    //             return back()->withErrors(['name' => 'User not found.']);
+    //         }
+    //         $songRequest = \App\Models\SongRequest::create([
+    //             'name' => $validated['name'],
+    //             'user_id' => $userId,
+    //             'song_name' => $validated['song_name'],
+    //             'artist' => $validated['artist'],
+    //             'status' => 'pending',
+    //         ]);
+
+    //         // Broadcast the new request event
+    //         event(new SongRequestCreated($songRequest));
+
+    //         return response()->json([
+    //             'success' => true,
+    //             'message' => 'Song request submitted successfully',
+    //             'data' => $songRequest
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Failed to store song request', [
+    //             'error' => $e->getMessage(),
+    //             'request' => $request->all()
+    //         ]);
+
+    //         if ($request->input('amount') < 10000) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Oppss minimal Rp.10000 guys'
+    //             ], 400);
+    //         }
+
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Failed to submit song request: ' . $e->getMessage() . '. Please try again later.'
+    //         ], 500);
+    //     }
+    // }
+
     public function storeSongRequest(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'song_name' => 'required|string|max:255',
-                'artist' => 'nullable|string|max:255',
-                'email' => 'required|email',
-                'amount' => 'required|numeric|min:10000'
-            ]);
+{
+    try {
+        // Validasi input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'song_name' => 'required|string|max:255',
+            'artist' => 'nullable|string|max:255',
+            'email' => 'required|email',
+            'amount' => 'required|numeric|min:100',
+        ]);
 
-            $songRequest = \App\Models\SongRequest::create([
-                'name' => $validated['name'],
-                'song_name' => $validated['song_name'],
-                'artist' => $validated['artist'],
-                'status' => 'pending',
-            ]);
+        // Cari atau buat user berdasarkan name
+        $user = \App\Models\User::firstOrCreate(
+            ['name' => $validated['name']],
+            ['email' => $validated['email']] // Pastikan email tersedia
+        );
 
-            // Broadcast the new request event
-            event(new SongRequestCreated($songRequest));
+        // Membuat request lagu baru dan otomatis menghubungkannya ke user
+        $songRequest = $user->songRequests()->create([
+            'name' => $validated['name'], // Pastikan 'name' terisi
+            'song_name' => $validated['song_name'],
+            'artist' => $validated['artist'],
+            'status' => 'pending',
+        ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Song request submitted successfully',
-                'data' => $songRequest
-            ]);
-        } catch (\Exception $e) {
-            \Log::error('Failed to store song request', [
-                'error' => $e->getMessage(),
-                'request' => $request->all()
-            ]);
+        // Broadcast event
+        event(new SongRequestCreated($songRequest));
 
-            if ($request->input('amount') < 10000) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Oppss minimal Rp.10000 guys'
-                ], 400);
-            }
+        // Return response sukses
+        return response()->json([
+            'success' => true,
+            'message' => 'Song request submitted successfully',
+            'data' => $songRequest
+        ]);
 
+    } catch (\Exception $e) {
+        \Log::error('Failed to store song request', [
+            'error' => $e->getMessage(),
+            'request' => $request->all()
+        ]);
+
+        // Handle if amount is less than 10000
+        if ($request->input('amount') < 10000) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to submit song request: ' . $e->getMessage() . '. Please try again later.'
-            ], 500);
+                'message' => 'Oppss minimal Rp.10000 guys'
+            ], 400);
         }
+
+        // Return error response
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to submit song request: ' . $e->getMessage() . '. Please try again later.'
+        ], 500);
     }
+}
+
     
     /**
      * Store Spotify API credentials for the authenticated user

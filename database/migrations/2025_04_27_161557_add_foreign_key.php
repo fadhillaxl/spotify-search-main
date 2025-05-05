@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        //
         Schema::table('song_requests', function (Blueprint $table) {
-            $table->decimal('amount', 10, 2)->nullable();
-            $table->string('payment_status')->nullable();
-            $table->string('payment_id')->nullable();
-            $table->string('payment_method')->nullable();
-            $table->timestamp('paid_at')->nullable();
-
+            $table->unsignedBigInteger('user_id'); // kolom foreign key
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -26,13 +23,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        //
         Schema::table('song_requests', function (Blueprint $table) {
             $table->dropColumn([
-                'amount',
-                'payment_status',
-                'payment_id',
-                'payment_method',
-                'paid_at'
+                'user_id'
+                
             ]);
         });
     }

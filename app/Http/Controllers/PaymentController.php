@@ -31,7 +31,7 @@ class PaymentController extends Controller
             
             // Validate amount
             $request->validate([
-                'amount' => 'required|numeric|min:10000',
+                'amount' => 'required|numeric|min:100',
                 'email' => 'required|email'
             ]);
 

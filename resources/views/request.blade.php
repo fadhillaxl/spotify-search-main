@@ -295,7 +295,8 @@
         </style>
         
         <!-- Midtrans Snap.js SDK -->
-        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+        <!-- <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script> -->
+        <script type="text/javascript" src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     </head>
     <body>
         <div class="container py-5">
@@ -425,12 +426,16 @@
                                 <input type="text" class="form-control" id="requestName" name="name" required>
                             </div>
                             <div class="mb-4">
+                                <label for="requestBand" class="form-label">Band Yang kamu Pilih</label>
+                                <input type="text" class="form-control" id="requestBand" name="name" value="{{$bandname}}" readonly required>
+                            </div>
+                            <div class="mb-4">
                                 <label for="songName" class="form-label">Song Name</label>
-                                <input type="text" class="form-control" id="songName" name="song_name" required>
+                                <input type="text" class="form-control" id="songName" name="song_name" readonly required>
                             </div>
                             <div class="mb-4">
                                 <label for="artistName" class="form-label">Artist (Optional)</label>
-                                <input type="text" class="form-control" id="artistName" name="artist">
+                                <input type="text" class="form-control" id="artistName" name="artist" readonly>
                             </div>
                             <div class="mb-4">
                                 <label for="email" class="form-label">Email</label>
@@ -553,7 +558,8 @@
                     console.error('Snap.js is not loaded');
                     // Try to reload Snap.js
                     const script = document.createElement('script');
-                    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+                    // script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+                    script.src = 'https://app.midtrans.com/snap/snap.js';
                     script.setAttribute('data-client-key', '{{ config('services.midtrans.client_key') }}');
                     script.onload = function() {
                         if (typeof window.snap !== 'undefined') {
@@ -867,7 +873,8 @@
                                                 console.error('Snap.js is not loaded');
                                                 // Try to reload Snap.js
                                                 const script = document.createElement('script');
-                                                script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+                                                // script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+                                                script.src = 'https://app.midtrans.com/snap/snap.js';
                                                 script.setAttribute('data-client-key', '{{ config('services.midtrans.client_key') }}');
                                                 script.onload = function() {
                                                     if (typeof window.snap !== 'undefined' && paymentResult.snap_token) {

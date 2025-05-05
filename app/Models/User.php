@@ -72,6 +72,11 @@ class User extends Authenticatable
         return $this->hasMany(SpotifyApiCredential::class);
     }
 
+    public function songRequests(): HasMany
+    {
+        return $this->hasMany(SongRequest::class);
+    }
+
     /**
      * Create a new playlist for this user.
      *
