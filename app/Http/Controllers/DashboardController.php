@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SongRequest;
 use App\Models\PlaylistSetting;
 use App\Events\SongRequestUpdated;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {

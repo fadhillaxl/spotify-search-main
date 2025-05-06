@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('song_requests', function (Blueprint $table) {
-            if (!Schema::hasColumn('song_requests', 'amount')) {
-                $table->decimal('amount', 8, 2)->nullable();
-            }
+            
             $table->string('payment_status')->nullable();
             $table->string('payment_id')->nullable();
             $table->string('payment_method')->nullable();
