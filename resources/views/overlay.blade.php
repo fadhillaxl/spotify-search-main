@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+@extends('layouts.app')
+
+@section('content')
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-12">
@@ -12,7 +15,7 @@
                     <i class="bi bi-search me-1"></i>Back to Search
                 </a>
             </div>
-            
+
             <div class="card dashboard-card mb-4">
                 <div class="card-body p-4">
                     <div class="row mb-3">
@@ -20,7 +23,9 @@
                             <div class="card bg-primary text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Total Requests</h5>
-                                    <p class="card-text display-6" id="totalRequests">{{ count($songRequests) }}</p>
+                                    <p class="card-text display-6" id="totalRequests">
+                                        {{ $songRequests ? count($songRequests) : 0 }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -28,7 +33,9 @@
                             <div class="card bg-warning text-dark">
                                 <div class="card-body">
                                     <h5 class="card-title">Pending</h5>
-                                    <p class="card-text display-6" id="pendingRequests">{{ $songRequests->where('status', 'pending')->count() }}</p>
+                                    <p class="card-text display-6" id="pendingRequests">
+                                        {{ $songRequests ? $songRequests->where('status', 'pending')->count() : 0 }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -36,13 +43,14 @@
                             <div class="card bg-success text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Paid</h5>
-                                    <p class="card-text display-6" id="approvedRequests">{{ $songRequests->where('status', 'approved')->count() }}</p>
+                                    <p class="card-text display-6" id="approvedRequests">
+                                        {{ $songRequests ? $songRequests->where('status', 'approved')->count() : 0 }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
-                        
                     </div>
-                    
+
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h2 class="h4 mb-0">All Song Requests</h2>
                         <div class="btn-group" role="group">
@@ -52,16 +60,16 @@
                             <button type="button" class="btn btn-outline-danger filter-btn" data-filter="rejected">Rejected</button>
                         </div>
                     </div>
-                    
+
                     <div id="loadingIndicator" class="text-center py-4 d-none">
                         <div class="spinner-border loading-spinner" role="status">
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         <p class="mt-3 text-muted">Loading...</p>
                     </div>
-                    
+
                     <div id="requestsList" class="d-flex flex-column gap-3">
-                        @if(count($songRequests) > 0)
+                        @if($songRequests && count($songRequests) > 0)
                             @foreach($songRequests as $request)
                                 <div class="card request-card" data-status="{{ $request->status }}" data-id="{{ $request->id }}">
                                     <div class="card-body">
@@ -125,6 +133,10 @@
         </div>
     </div>
 </div>
+
+<!-- Toast and script stacks remain unchanged -->
+@endsection
+
 
 <!-- Status Update Toast -->
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
