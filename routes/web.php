@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 
 
 Route::get('/request/{bandname}', [SpotifyController::class, 'searchRequest'])->name('searchRequest');
+Route::get('/requestcommerce/{bandname}', [SpotifyController::class, 'searchRequest'])->name('searchRequestCommerce');
 Route::get('/api/request/playlist/{playlistId}/tracks', [SpotifyController::class, 'playlistTracks'])->name('playlist.tracks');
 Route::get('/api/request/playlist/{playlistId}/search', [SpotifyController::class, 'searchPlaylist'])->name('playlist.search');
 Route::get('/api/request/active-playlists', [SpotifyController::class, 'getActivePlaylistIds']);

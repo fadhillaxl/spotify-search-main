@@ -36,6 +36,14 @@ class SpotifyController extends Controller
         return view('request', compact('bandname', 'activeplaylistId'));
     }
 
+    public function searchRequestCommerce($bandname)
+    {
+        $userId = \App\Models\User::where('name', $bandname)->value('id');
+        $activeplaylist = \App\Models\Playlist::where('user_id', $userId)->where('is_active', true)->first();
+        $activeplaylistId = $activeplaylist ? $activeplaylist->spotify_playlist_id : null;
+        return view('request-commerce', compact('bandname', 'activeplaylistId'));
+    }
+
     /**
      * Search for tracks
      */
