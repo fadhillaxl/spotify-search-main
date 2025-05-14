@@ -320,9 +320,10 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-12 col-md-6">
-                        <h1 class="display-6 fw-bold mb-0">
-                            <i class="bi bi-spotify me-2"></i>PLAYCROWD
-                        </h1>
+                    <h1 class="display-6 fw-bold mb-0 d-flex align-items-center">
+                        <img src="{{ asset('images/logo2.png') }}" alt="Playcrowd Logo" style="height: 190px; margin-right: 10px;">
+                        PLAYCROWD
+                    </h1>
                     </div>
                     <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
                         <div class="contact-info">
