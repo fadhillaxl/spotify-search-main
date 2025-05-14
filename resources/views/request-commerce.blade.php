@@ -15,6 +15,7 @@
             body {
                 background-color: #121212;
                 color: #ffffff;
+                font-family: 'Roboto', sans-serif;
             }
             .search-card {
                 background-color: #181818;
@@ -128,6 +129,57 @@
                 background-color: #1aa34a;
                 transform: scale(1.05);
             }
+            /* Mobile optimized buttons */
+            @media (max-width: 767.98px) {
+                .btn-add-to-cart {
+                    padding: 0.35rem 0.75rem;
+                    font-size: 0.85rem;
+                    width: 100%;
+                }
+                .track-actions {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                    align-items: flex-start;
+                }
+                .track-info {
+                    padding: 12px 10px;
+                }
+                .show-more-button {
+                    padding: 0.4rem 1.2rem;
+                    font-size: 0.9rem;
+                }
+                .sort-dropdown {
+                    font-size: 0.85rem;
+                    padding: 0.35rem 0.5rem;
+                }
+                .top-bar {
+                    flex-direction: column;
+                    gap: 0.75rem;
+                    align-items: flex-start;
+                }
+                .search-container .btn {
+                    padding: 0.35rem 0.75rem;
+                    font-size: 0.9rem;
+                }
+                .search-container .btn-lg {
+                    padding: 0.5rem 1rem;
+                }
+            }
+            /* Improve mobile catalog grid */
+            @media (max-width: 575.98px) {
+                .col-6.col-md-4.col-lg-3 {
+                    padding-left: 6px;
+                    padding-right: 6px;
+                }
+                .row {
+                    margin-left: -6px;
+                    margin-right: -6px;
+                }
+                .price-badge {
+                    font-size: 0.75rem;
+                    padding: 0.2rem 0.4rem;
+                }
+            }
             .search-container {
                 background-color: #181818;
                 padding: 1.5rem 2rem;
@@ -182,6 +234,80 @@
                 font-weight: 600;
                 z-index: 10;
             }
+            .site-header {
+                background-color: #181818;
+                padding: 1rem 0;
+                margin-bottom: 2rem;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            }
+            .footer {
+                background-color: #181818;
+                padding: 2rem 0;
+                margin-top: 3rem;
+                color: #b3b3b3;
+                border-top: 1px solid #333;
+            }
+            .footer h5 {
+                color: white;
+                font-weight: 600;
+                margin-bottom: 1rem;
+            }
+            .footer ul {
+                list-style: none;
+                padding-left: 0;
+            }
+            .footer ul li {
+                margin-bottom: 0.5rem;
+            }
+            .footer a {
+                color: #b3b3b3;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+            .footer a:hover {
+                color: #1DB954;
+                text-decoration: none;
+            }
+            .contact-info {
+                margin-bottom: 1.5rem;
+            }
+            .contact-info i {
+                width: 20px;
+                margin-right: 10px;
+                color: #1DB954;
+            }
+            .currency {
+                font-weight: 700;
+                color: #1DB954;
+            }
+            .product-description {
+                color: #b3b3b3;
+                font-size: 0.875rem;
+                margin-bottom: 1rem;
+                max-height: 80px;
+                overflow: hidden;
+            }
+            .view-details {
+                color: #1DB954;
+                text-decoration: none;
+                font-size: 0.875rem;
+                transition: color 0.3s ease;
+            }
+            .view-details:hover {
+                color: #1aa34a;
+                text-decoration: underline;
+            }
+            .modal-content {
+                background-color: #181818;
+                border: none;
+                border-radius: 8px;
+            }
+            .modal-header {
+                border-bottom: 1px solid #333;
+            }
+            .modal-footer {
+                border-top: 1px solid #333;
+            }
         </style>
         
         <!-- Midtrans Snap.js SDK -->
@@ -189,18 +315,29 @@
         <script type="text/javascript" src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     </head>
     <body>
-        <div class="container py-5">
-            <div class="row justify-content-center">
-                <div class="col-12 col-md-8 col-lg-6">
-                    <div class="text-center mb-4">
-                        <h1 class="display-5 fw-bold">
-                        <a href="https://saweria.co/youthband" target="_blank">
-                        Donasi Sekarang
-                        </a>
-
+        <!-- Site Header with Contact Info -->
+        <header class="site-header">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-12 col-md-6">
+                        <h1 class="display-6 fw-bold mb-0">
                             <i class="bi bi-spotify me-2"></i>Spotify Search
                         </h1>
                     </div>
+                    <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
+                        <div class="contact-info">
+                            <p class="mb-1"><i class="bi bi-envelope"></i> support@spotifysearch.com</p>
+                            <p class="mb-1"><i class="bi bi-telephone"></i> +62 812 3456 7890</p>
+                            <p class="mb-0"><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-12">
                     
                     @php
                         $activeCredentials = app(App\Services\SpotifyService::class)->getActiveCredentials();
@@ -208,29 +345,44 @@
                     
                     @if($activeCredentials)
                         <div class="search-container">
-                            <form id="searchForm" class="mb-4">
-                                <div class="input-group">
-                                    <input 
-                                        type="text" 
-                                        id="searchInput" 
-                                        name="query" 
-                                        class="form-control search-input"
-                                        placeholder="Search for songs, artists, albums..." 
-                                        required
-                                    >
-                                    <button 
-                                        type="submit" 
-                                        class="btn btn-lg search-button text-white"
-                                    >
-                                        <i class="bi bi-search"></i>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <form id="searchForm" class="mb-3">
+                                        <div class="input-group">
+                                            <input 
+                                                type="text" 
+                                                id="searchInput" 
+                                                name="query" 
+                                                class="form-control search-input"
+                                                placeholder="Search for songs, artists, albums..." 
+                                                required
+                                            >
+                                            <button 
+                                                type="submit" 
+                                                class="btn btn-lg search-button text-white"
+                                            >
+                                                <i class="bi bi-search"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-4 text-md-end">
+                                    <button id="showAllSongsButton" class="btn btn-outline-success me-2 mb-2 mb-md-0">
+                                        <i class="bi bi-music-note-list me-1"></i><span class="d-none d-md-inline">All</span> Songs
+                                    </button>
+                                    <button id="requestSongButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#songRequestModal">
+                                        <i class="bi bi-plus-circle me-1"></i><span class="d-none d-md-inline">Request</span> Song
                                     </button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
 
                         <div class="track-list">
                             <div class="catalog-header">
-                                <div class="catalog-title">Music Catalog</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="catalog-title">Song Request Catalog</div>
+                                    <div class="catalog-subtitle">Request your favorite songs</div>
+                                </div>
                             </div>
                             
                             <div class="top-bar">
@@ -286,10 +438,49 @@
                         </div>
                     @endif
                 </div>
-                
-
             </div>
         </div>
+        
+        <!-- Footer with Business Info and Terms -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <h5>About Spotify Search</h5>
+                        <p>We provide a service for requesting songs to be added to playlists. All transactions are processed securely through Midtrans payment gateway.</p>
+                    </div>
+                    <div class="col-md-3 mb-4 mb-md-0">
+                        <h5>Contact Us</h5>
+                        <ul>
+                            <li><i class="bi bi-envelope"></i> support@spotifysearch.com</li>
+                            <li><i class="bi bi-telephone"></i> +62 812 3456 7890</li>
+                            <li><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-2 mb-4 mb-md-0">
+                        <h5>Follow Us</h5>
+                        <ul>
+                            <li><a href="#"><i class="bi bi-instagram me-2"></i>Instagram</a></li>
+                            <li><a href="#"><i class="bi bi-twitter me-2"></i>Twitter</a></li>
+                            <li><a href="#"><i class="bi bi-facebook me-2"></i>Facebook</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-3">
+                        <h5>Policies</h5>
+                        <ul>
+                            <li><a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms & Conditions</a></li>
+                            <li><a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a></li>
+                            <li><a href="#" data-bs-toggle="modal" data-bs-target="#refundModal">Refund Policy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12 text-center">
+                        <p class="mb-0">&copy; 2023 Spotify Search. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
         
         <!-- Song Request Modal -->
         <div class="modal fade" id="songRequestModal" tabindex="-1" aria-labelledby="songRequestModalLabel" aria-hidden="true">
@@ -345,6 +536,92 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" id="submitSongRequest">Submit Request</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Terms and Conditions Modal -->
+        <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="termsModalLabel">Terms & Conditions</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>1. Acceptance of Terms</h6>
+                        <p>By accessing and using Spotify Search services, you agree to be bound by these Terms & Conditions.</p>
+                        
+                        <h6>2. Service Description</h6>
+                        <p>Spotify Search provides a platform for users to request songs to be added to playlists for a fee.</p>
+                        
+                        <h6>3. Payment Terms</h6>
+                        <p>All prices are in Indonesian Rupiah (IDR). Payment must be made in full before song requests will be processed.</p>
+                        
+                        <h6>4. Request Processing</h6>
+                        <p>Once payment is confirmed, your song request will be processed within 24-48 hours.</p>
+                        
+                        <h6>5. Intellectual Property</h6>
+                        <p>We do not own the songs or music available through our service. All rights belong to their respective owners.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Privacy Policy Modal -->
+        <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="privacyModalLabel">Privacy Policy</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>We respect your privacy and are committed to protecting your personal data.</p>
+                        
+                        <h6>Information We Collect</h6>
+                        <p>We collect personal information such as your name, email address, and payment details when you make a song request.</p>
+                        
+                        <h6>How We Use Your Information</h6>
+                        <p>Your information is used to process your requests, manage your account, and provide customer support.</p>
+                        
+                        <h6>Data Security</h6>
+                        <p>We implement appropriate security measures to protect your personal data against unauthorized access.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Refund Policy Modal -->
+        <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="refundModalLabel">Refund Policy</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>Refund Eligibility</h6>
+                        <p>Refunds are available within 24 hours of purchase if we are unable to process your song request.</p>
+                        
+                        <h6>Refund Process</h6>
+                        <p>To request a refund, contact our customer support team at support@spotifysearch.com with your order details.</p>
+                        
+                        <h6>Refund Timeline</h6>
+                        <p>Approved refunds will be processed within a period of 5-7 business days.</p>
+                        
+                        <h6>Non-Refundable Circumstances</h6>
+                        <p>Requests for songs that violate our content guidelines or after the 24-hour window are not eligible for refunds.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -509,7 +786,7 @@
                         const resultsHTML = tracks.map((track, index) => `
                             <div class="col-6 col-md-4 col-lg-3 mb-4">
                                 <div class="track-card" data-index="${index}">
-                                    <div class="price-badge">Rp 10.000</div>
+                                    <div class="price-badge"><span class="currency">Rp</span> 10.000</div>
                                     <div class="track-image-container">
                                         <img 
                                             src="${track.album?.images?.[0]?.url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiMyODI4MjgiLz48cGF0aCBkPSJNMjAgMTBDMTUuNTg1OCAxMCAxMiAxMy41ODU4IDEyIDE4QzEyIDIyLjQxNDIgMTUuNTg1OCAyNiAyMCAyNkMyNC40MTQyIDI2IDI4IDIyLjQxNDIgMjggMThDMjggMTMuNTg1OCAyNC40MTQyIDEwIDIwIDEwWiIgZmlsbD0iIzRBNEE0QSIvPjwvc3ZnPg=='}" 
@@ -523,14 +800,17 @@
                                             ${track.artists ? track.artists.map(artist => artist.name).join(', ') : 'Unknown Artist'}
                                         </div>
                                         <div class="track-album">${track.album?.name || 'Unknown Album'}</div>
-                                        <div class="track-duration">${formatDuration(track.duration_ms)}</div>
+                                        <div class="product-description">
+                                            Request this song to be added to our playlist. Duration: ${formatDuration(track.duration_ms)}
+                                        </div>
                                         <div class="track-actions">
+                                            <a href="#" class="view-details">View Details</a>
                                             <button class="btn btn-sm btn-add-to-cart request-song-btn" 
                                                 data-song-name="${track.name || 'Unknown Track'}"
                                                 data-artist="${track.artists ? track.artists.map(artist => artist.name).join(', ') : 'Unknown Artist'}"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#songRequestModal">
-                                                <i class="bi bi-cart-plus me-1"></i> Request Now
+                                                <i class="bi bi-cart-plus me-1"></i> <span class="d-none d-md-inline">Request</span> Now
                                             </button>
                                         </div>
                                     </div>
