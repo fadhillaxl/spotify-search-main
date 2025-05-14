@@ -321,12 +321,12 @@
                 <div class="row align-items-center">
                     <div class="col-12 col-md-6">
                         <h1 class="display-6 fw-bold mb-0">
-                            <i class="bi bi-spotify me-2"></i>Spotify Search
+                            <i class="bi bi-spotify me-2"></i>PLAYCROWD
                         </h1>
                     </div>
                     <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
                         <div class="contact-info">
-                            <p class="mb-1"><i class="bi bi-envelope"></i> support@spotifysearch.com</p>
+                            <p class="mb-1"><i class="bi bi-envelope"></i> support@playcrowd.com</p>
                             <p class="mb-1"><i class="bi bi-telephone"></i> +62 812 3456 7890</p>
                             <p class="mb-0"><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</p>
                         </div>
