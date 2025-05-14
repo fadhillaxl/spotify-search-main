@@ -318,20 +318,42 @@
         <!-- Site Header with Contact Info -->
         <header class="site-header">
             <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-12 col-md-6">
-                    <h1 class="display-6 fw-bold mb-0 d-flex align-items-center">
-                        <img src="{{ asset('images/logo2.png') }}" alt="Playcrowd Logo" style="height: 190px; margin-right: 10px;">
-                        PLAYCROWD
-                    </h1>
-                    </div>
-                    <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
-                        <div class="contact-info">
-                            <p class="mb-1"><i class="bi bi-envelope"></i> support@playcrowd.com</p>
-                            <p class="mb-1"><i class="bi bi-telephone"></i> +62 812 3456 7890</p>
-                            <p class="mb-0"><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</p>
+                <div class="row align-items-center mb-0">
+                    <div class="d-block d-md-none ">
+                        <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
+                            <div class="contact-info">
+                                <p class="mb-1"><i class="bi bi-envelope"></i> support@playcrowd.com</p>
+                                <p class="mb-1"><i class="bi bi-telephone"></i> +62 812 3456 7890</p>
+                                <p class="mb-0"><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</p>
+                            </div>
                         </div>
                     </div>
+                    <div class="col-12 col-md-6">
+                        <!-- Mobile view: Centered logo only -->
+                        <div class="d-block d-md-none text-center mb-1">
+                            <img src="{{ asset('images/logo2.png') }}" alt="Playcrowd Logo" class="img-fluid" style="max-height: 250px;">
+                        </div>
+
+                        <!-- Desktop view: Logo + Text -->
+                        <div class="d-none d-md-flex align-items-center">
+                            <img src="{{ asset('images/logo2.png') }}" alt="Playcrowd Logo" class="img-fluid" style="max-height: 190px; margin-right: 10px;">
+                            <h1 class="display-6 fw-bold mb-0">PLAYCROWD</h1>
+                        </div>
+                    </div>
+                    <!-- Desktop view: Logo + Text -->
+                    <div class="d-none d-md-flex ">
+                        <div class="col-12 col-md-12 text-md-end mt-3 mt-md-0">
+                            <div class="contact-info">
+                                <p class="mb-1"><i class="bi bi-envelope"></i> support@playcrowd.com</p>
+                                <p class="mb-1"><i class="bi bi-telephone"></i> +62 812 3456 7890</p>
+                                <p class="mb-0"><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+
+                    
                 </div>
             </div>
         </header>
