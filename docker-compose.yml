@@ -49,7 +49,7 @@ services:
     networks:
       - spotify-search
     ports:
-      - "3308:3306"
+      - "3302:3306"
 
   # Redis Service
   redis:
