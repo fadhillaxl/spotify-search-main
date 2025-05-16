@@ -11,7 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\BandController;
 
 
-Route::get('/request/{bandname}', [SpotifyController::class, 'searchRequest'])->name('searchRequest');
+Route::get('/request/{bandname}', [SpotifyController::class, 'searchRequestCommerce'])->name('searchRequestCommerce');
 Route::get('/requestcommerce/{bandname}', [SpotifyController::class, 'searchRequestCommerce'])->name('searchRequestCommerce');
 Route::get('/api/request/playlist/{playlistId}/tracks', [SpotifyController::class, 'playlistTracks'])->name('playlist.tracks');
 Route::get('/api/request/playlist/{playlistId}/search', [SpotifyController::class, 'searchPlaylist'])->name('playlist.search');
