@@ -118,7 +118,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
-                <a class="navbar-brand" href="#">
+                <a class="navbar-brand" href="/">
                     <img src="/images/logo2.png" alt="PLAYCROWD Logo">
                     PLAYCROWD
                 </a>

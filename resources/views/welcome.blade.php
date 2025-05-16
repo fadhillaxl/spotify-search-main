@@ -175,7 +175,7 @@
             <h1 class="hero-title">Request Songs, Support Bands</h1>
             <p class="hero-subtitle">Connect with live bands at your favorite cafes. Request songs, send messages, and show your support through donations.</p>
             <div class="hero-btns">
-                <a href="{{ route('searchRequestCommerce', ['bandname' => 'default']) }}" class="btn btn-retro-red me-2">Request a Song</a>
+                <a href="{{ route('bands') }}" class="btn btn-retro-red me-2">Request a Song</a>
                 <a href="#features" class="btn btn-retro-blue">How It Works</a>
             </div>
         </div>
