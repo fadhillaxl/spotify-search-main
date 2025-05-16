@@ -308,6 +308,15 @@
             .modal-footer {
                 border-top: 1px solid #333;
             }
+            .box
+            {
+                background-color: #181818;
+                padding: 1.5rem 2rem;
+                margin-bottom: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+            
         </style>
         
         <!-- Midtrans Snap.js SDK -->
@@ -319,15 +328,7 @@
         <header class="site-header">
             <div class="container">
                 <div class="row align-items-center mb-0">
-                    <div class="d-block d-md-none ">
-                        <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
-                            <div class="contact-info">
-                                <p class="mb-1"><i class="bi bi-envelope"></i> support@playcrowd.com</p>
-                                <p class="mb-1"><i class="bi bi-telephone"></i> +62 812 3456 7890</p>
-                                <p class="mb-0"><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</p>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="col-12 col-md-6">
                         <!-- Mobile view: Centered logo only -->
                         <div class="d-block d-md-none text-center mb-1">
@@ -355,9 +356,32 @@
 
                     
                 </div>
+                
             </div>
         </header>
-
+        
+        
+        <div class="container d-block d-md-none ">
+            <div class="box">
+                <div class="d-block d-md-none ">
+                    <div class="container py-4 bg-gray-100">
+                        <div class="row justify-content-center">
+                            <div class="col-12">
+                                <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
+                                    <div class="contact-info">
+                                        <p class="mb-1"><i class="bi bi-envelope"></i> <a href="mailto:support@playcrowd.com">support@playcrowd.com</a></p>
+                                        <p class="mb-1"><i class="bi bi-telephone"></i> <a href="https://wa.me/6281234567890">+62 812 3456 7890</a></p>
+                                        <p class="mb-0"><i class="bi bi-geo-alt"></i> <a href="https://www.google.com/maps/@-6.2179024,106.9106331,15z" target="_blank">Jakarta, Indonesia</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        
         <div class="container py-4">
             <div class="row justify-content-center">
                 <div class="col-12">
@@ -390,18 +414,18 @@
                                     </form>
                                 </div>
                                 <div class="col-md-4 text-md-end">
-                                    <button id="showAllSongsButton" class="btn btn-outline-success me-2 mb-2 mb-md-0">
+                                    <!-- <button id="showAllSongsButton" class="btn btn-outline-success me-2 mb-2 mb-md-0">
                                         <i class="bi bi-music-note-list me-1"></i><span class="d-none d-md-inline">All</span> Songs
                                     </button>
                                     <button id="requestSongButton" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#songRequestModal">
                                         <i class="bi bi-plus-circle me-1"></i><span class="d-none d-md-inline">Request</span> Song
-                                    </button>
+                                    </button> -->
                                 </div>
                             </div>
                         </div>
 
                         <div class="track-list">
-                            <div class="catalog-header">
+                            <!-- <div class="catalog-header">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="catalog-title">Song Request Catalog</div>
                                     <div class="catalog-subtitle">Request your favorite songs</div>
@@ -417,7 +441,7 @@
                                         <option value="oldest">Oldest</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> -->
                             
                             <div id="searchResults" class="row">
                                 <!-- Results will be displayed here as cards -->
