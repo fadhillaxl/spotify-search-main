@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SpotifyApiCredentialController;
 use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\BandController;
 
 
 Route::get('/request/{bandname}', [SpotifyController::class, 'searchRequest'])->name('searchRequest');
@@ -69,4 +70,6 @@ Route::middleware(['web'])->group(function () {
     });
 
     require __DIR__.'/auth.php';
+
+    Route::get('/bands', [BandController::class, 'index'])->name('bands');
 });
