@@ -320,8 +320,10 @@
         </style>
         
         <!-- Midtrans Snap.js SDK -->
-        <!-- <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script> -->
-        <script type="text/javascript" src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+        <!-- Production -->
+        <!-- <script type="text/javascript" src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script> -->
+        <!-- Sandbox -->
+        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     </head>
     <body>
         <!-- Site Header with Contact Info -->
@@ -791,7 +793,7 @@
                     // Try to reload Snap.js
                     const script = document.createElement('script');
                     // script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
-                    script.src = 'https://app.midtrans.com/snap/snap.js';
+                    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
                     script.setAttribute('data-client-key', '{{ config('services.midtrans.client_key') }}');
                     script.onload = function() {
                         if (typeof window.snap !== 'undefined') {
@@ -1252,6 +1254,148 @@
                         }
                         const toast = new bootstrap.Toast(toastElement);
                         toast.show();
+                    }
+
+                    // Function to handle Midtrans payment popup
+                    function openPaymentPopup(snapToken) {
+                        if (typeof window.snap === 'undefined') {
+                            showToast('errorToast', 'Payment system is not available. Please try again later.');
+                            return;
+                        }
+
+                        // Validate snap token
+                        if (!snapToken || typeof snapToken !== 'string') {
+                            console.error('Invalid snap token:', snapToken);
+                            showToast('errorToast', 'Invalid payment token. Please try again.');
+                            return;
+                        }
+
+                        // Log the token for debugging
+                        console.log('Opening payment popup with token:', snapToken);
+
+                        window.snap.pay(snapToken, {
+                            onSuccess: function(result) {
+                                console.log('Payment success:', result);
+                                showToast('paymentSuccessToast');
+                                
+                                // Update payment status
+                                fetch(`/api/payment/${result.order_id}/update-status`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify({
+                                        payment_status: 'success',
+                                        status: 'success',
+                                        payment_method: result.payment_type,
+                                        paid_at: result.transaction_time
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Failed to update payment status');
+                                    }
+                                    return response.json();
+                                })
+                                .catch(error => {
+                                    console.error('Error updating payment status:', error);
+                                    showToast('errorToast', 'Payment successful but status update failed. Please contact support.');
+                                });
+                            },
+                            onPending: function(result) {
+                                console.log('Payment pending:', result);
+                                showToast('paymentPendingToast');
+                                
+                                // Update payment status
+                                fetch(`/api/payment/${result.order_id}/update-status`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify({
+                                        payment_status: 'pending',
+                                        status: 'pending',
+                                        payment_method: result.payment_type,
+                                        paid_at: null
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Failed to update payment status');
+                                    }
+                                    return response.json();
+                                })
+                                .catch(error => {
+                                    console.error('Error updating payment status:', error);
+                                    showToast('errorToast', 'Payment pending but status update failed. Please contact support.');
+                                });
+                            },
+                            onError: function(result) {
+                                console.error('Payment error:', result);
+                                showToast('paymentErrorToast');
+                                
+                                // Update payment status
+                                fetch(`/api/payment/${result.order_id}/update-status`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                    },
+                                    body: JSON.stringify({
+                                        payment_status: 'failed',
+                                        status: 'failed',
+                                        payment_method: result.payment_type || 'unknown',
+                                        paid_at: null
+                                    })
+                                })
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Failed to update payment status');
+                                    }
+                                    return response.json();
+                                })
+                                .catch(error => {
+                                    console.error('Error updating payment status:', error);
+                                    showToast('errorToast', 'Payment failed and status update failed. Please contact support.');
+                                });
+                            },
+                            onClose: function() {
+                                console.log('Payment popup closed');
+                                showToast('paymentCancelledToast');
+                            }
+                        });
+                    }
+
+                    // Add error handling for payment creation
+                    function createPayment(orderId, amount, email) {
+                        return fetch(`/api/payment/${orderId}/create`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({
+                                amount: amount,
+                                email: email
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().then(err => {
+                                    console.error('Payment creation failed:', err);
+                                    throw new Error(err.message || 'Failed to create payment');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(result => {
+                            if (!result.success || !result.snap_token) {
+                                throw new Error(result.message || 'Invalid payment response');
+                            }
+                            return result.snap_token;
+                        });
                     }
                 }
             });
