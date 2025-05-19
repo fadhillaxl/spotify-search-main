@@ -320,10 +320,10 @@
         </style>
         
         <!-- Midtrans Snap.js SDK -->
-        <!-- Production -->
-        <!-- <script type="text/javascript" src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script> -->
         <!-- Sandbox -->
-        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+        <!-- <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script> -->
+        <!-- Production -->
+        <script type="text/javascript" src="https://app.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     </head>
     <body>
         <!-- Site Header with Contact Info -->
@@ -793,7 +793,7 @@
                     // Try to reload Snap.js
                     const script = document.createElement('script');
                     // script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
-                    script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+                    script.src = 'https://app.midtrans.com/snap/snap.js';
                     script.setAttribute('data-client-key', '{{ config('services.midtrans.client_key') }}');
                     script.onload = function() {
                         if (typeof window.snap !== 'undefined') {
