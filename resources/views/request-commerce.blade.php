@@ -493,13 +493,13 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-4 mb-4 mb-md-0">
-                        <h5>About Spotify Search</h5>
+                        <h5>About Playcrowd</h5>
                         <p>We provide a service for requesting songs to be added to playlists. All transactions are processed securely through Midtrans payment gateway.</p>
                     </div>
                     <div class="col-md-3 mb-4 mb-md-0">
                         <h5>Contact Us</h5>
                         <ul>
-                            <li><i class="bi bi-envelope"></i> support@spotifysearch.com</li>
+                            <li><i class="bi bi-envelope"></i> support@playcrowd.my.id</li>
                             <li><i class="bi bi-telephone"></i> +62 812 3456 7890</li>
                             <li><i class="bi bi-geo-alt"></i> Jakarta, Indonesia</li>
                         </ul>
@@ -577,6 +577,21 @@
                                         return 'Rp ' + rupiah;
                                     }
                                 </script>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label">Payment Method</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="paymentOnline" value="online" checked>
+                                    <label class="form-check-label" for="paymentOnline">
+                                        Online Payment
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method" id="paymentCash" value="cash">
+                                    <label class="form-check-label" for="paymentCash">
+                                        Cash Payment
+                                    </label>
+                                </div>
                             </div>
                         </form>
                     </div>
@@ -733,6 +748,19 @@
                     <div class="toast-body fw-bold">
                         <i class="bi bi-info-circle-fill me-2"></i>
                         Payment was cancelled. Please try again if you want to complete your song request.
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cash Payment Success Toast -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1060">
+            <div id="cashPaymentSuccessToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-bold">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Song request submitted successfully! Please complete your cash payment at our location.
                     </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
@@ -1044,134 +1072,62 @@
                                     // Reset the form
                                     form.reset();
                                     
-                                    // Show success toast
-                                    const toast = new bootstrap.Toast(document.getElementById('requestSuccessToast'));
-                                    toast.show();
-
-                                    // Check if we have a valid song request ID in the data object
-                                    if (!result.data || !result.data.id) {
-                                        console.error('No song request ID received:', result);
-                                        throw new Error('Failed to get song request ID');
-                                    }
-
-                                    // Create payment and get snap token
-                                    fetch(`/api/payment/${result.data.id}/create`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json',
-                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                        },
-                                        body: JSON.stringify({
-                                            amount: data.amount,
-                                            email: data.email
+                                    // Check payment method
+                                    const paymentMethod = formData.get('payment_method');
+                                    
+                                    if (paymentMethod === 'cash') {
+                                        // Show cash payment success toast
+                                        showToast('cashPaymentSuccessToast');
+                                        
+                                        // Update payment status for cash payment
+                                        fetch(`/api/payment/${result.data.id}/update-status`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                            },
+                                            body: JSON.stringify({
+                                                payment_status: 'pending',
+                                                status: 'pending',
+                                                payment_method: 'cash',
+                                                paid_at: null
+                                            })
                                         })
-                                    })
-                                    .then(response => {
-                                        if (!response.ok) {
-                                            return response.json().then(err => Promise.reject(err));
-                                        }
-                                        return response.json();
-                                    })
-                                    .then(paymentResult => {
-                                        if (paymentResult.success && paymentResult.snap_token) {
-                                            // Open Midtrans payment popup
-                                            if (typeof window.snap === 'undefined') {
-                                                console.error('Snap.js is not loaded');
-                                                // Try to reload Snap.js
-                                                const script = document.createElement('script');
-                                                // script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
-                                                script.src = 'https://app.midtrans.com/snap/snap.js';
-                                                script.setAttribute('data-client-key', '{{ config('services.midtrans.client_key') }}');
-                                                script.onload = function() {
-                                                    if (typeof window.snap !== 'undefined' && paymentResult.snap_token) {
-                                                        // Retry opening the payment popup
-                                                        openPaymentPopup(paymentResult.snap_token);
-                                                    } else {
-                                                        showToast('errorToast', 'Payment system is not ready. Please try again later.');
-                                                    }
-                                                };
-                                                script.onerror = function() {
-                                                    showToast('errorToast', 'Failed to load payment system. Please try again later.');
-                                                };
-                                                document.body.appendChild(script);
-                                                return;
+                                        .then(response => response.json())
+                                        .catch(error => console.error('Error updating cash payment status:', error));
+                                    } else {
+                                        // Show regular success toast for online payment
+                                        showToast('requestSuccessToast');
+                                        
+                                        // Create payment and get snap token for online payment
+                                        fetch(`/api/payment/${result.data.id}/create`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                            },
+                                            body: JSON.stringify({
+                                                amount: data.amount,
+                                                email: data.email
+                                            })
+                                        })
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                return response.json().then(err => Promise.reject(err));
                                             }
-
-                                            openPaymentPopup(paymentResult.snap_token);
-                                        } else {
-                                            throw new Error(paymentResult.message || 'Failed to create payment');
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Payment creation error:', error);
-                                        showToast('errorToast', 'Failed to create payment: ' + (error.message || 'Unknown error'));
-                                    });
-
-                                    function openPaymentPopup(snapToken) {
-                                        if (!snapToken) {
-                                            console.error('No snap token provided');
-                                            showToast('errorToast', 'Failed to initialize payment. Please try again.');
-                                            return;
-                                        }
-
-                                        try {
-                                            window.snap.pay(snapToken, {
-                                                onSuccess: function(result) {
-                                                    console.log('Payment success', result);
-                                                    
-                                                    // Extract song request ID from order_id (format: SR-{id}-{timestamp})
-                                                    const orderId = result.order_id;
-                                                    const songRequestId = orderId.split('-')[1];
-                                                    
-                                                    // Update payment status
-                                                    fetch(`/api/payment/${songRequestId}/update-status`, {
-                                                        method: 'POST',
-                                                        headers: {
-                                                            'Content-Type': 'application/json',
-                                                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                                                        },
-                                                        body: JSON.stringify({
-                                                            payment_status: 'success',
-                                                            status: 'approved',
-                                                            payment_method: result.payment_type,
-                                                            paid_at: new Date().toISOString()
-                                                        })
-                                                    })
-                                                    .then(response => {
-                                                        if (!response.ok) {
-                                                            throw new Error('Failed to update payment status');
-                                                        }
-                                                        return response.json();
-                                                    })
-                                                    .then(data => {
-                                                        if (data.success) {
-                                                            showToast('paymentSuccessToast');
-                                                        } else {
-                                                            showToast('errorToast', data.message || 'Failed to update payment status');
-                                                        }
-                                                    })
-                                                    .catch(error => {
-                                                        console.error('Error updating payment status:', error);
-                                                        showToast('errorToast', 'Payment was successful but there was an error updating the status. Please contact support.');
-                                                    });
-                                                },
-                                                onPending: function(result) {
-                                                    console.log('Payment pending', result);
-                                                    showToast('paymentPendingToast');
-                                                },
-                                                onError: function(result) {
-                                                    console.log('Payment error', result);
-                                                    showToast('paymentErrorToast');
-                                                },
-                                                onClose: function() {
-                                                    console.log('Payment popup closed');
-                                                    showToast('paymentCancelledToast');
-                                                }
-                                            });
-                                        } catch (error) {
-                                            console.error('Error opening payment popup:', error);
-                                            showToast('errorToast', 'Failed to open payment popup. Please try again.');
-                                        }
+                                            return response.json();
+                                        })
+                                        .then(paymentResult => {
+                                            if (paymentResult.success && paymentResult.snap_token) {
+                                                openPaymentPopup(paymentResult.snap_token);
+                                            } else {
+                                                throw new Error(paymentResult.message || 'Failed to create payment');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Payment creation error:', error);
+                                            showToast('errorToast', 'Failed to create payment: ' + (error.message || 'Unknown error'));
+                                        });
                                     }
                                 } else {
                                     throw new Error(result.message || 'Failed to submit song request');
