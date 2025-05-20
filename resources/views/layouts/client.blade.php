@@ -128,6 +128,9 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
+                            <a href="http://asd">asdasd</a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('bands') }}" class="nav-link">Bands</a>
                         </li>
                         @if (Route::has('login'))
