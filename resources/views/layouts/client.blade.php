@@ -122,7 +122,7 @@
                     <img src="/images/logo2.png" alt="PLAYCROWD Logo">
                     PLAYCROWDid
                 </a>
-                <div class="collapse navbar-collapse">
+                <div>
                     <ul class="navbar-nav ms-auto">
                         
                         <li class="nav-item">
